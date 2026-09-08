@@ -49,3 +49,4 @@ jobs:
           git push origin HEAD:main
 
 # One-shot normalization workflow; remove after successful migration.
+# Trigger after registration.
