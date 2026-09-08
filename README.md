@@ -5,7 +5,7 @@ Tasks manages actionable work across the xdecaro Joomla ecosystem.
 ## Technical identity
 
 - Component: `com_xdecarotasks`
-- PHP namespace: `Xdecaro\Component\Tasks`
+- PHP namespace: `xdecaro\Component\Tasks`
 - Reserved package identity: `pkg_xdecarotasks`
 - Reserved database namespace: `#__xdecarotasks_*`
 
@@ -15,9 +15,9 @@ Tasks owns tasks, assignees, status, priority, due dates, checklists, comments a
 
 Initial Core integration targets:
 
-- `Xdecaro\Core\Integration\EntityReference`
-- `Xdecaro\Core\Integration\Capability`
-- `Xdecaro\Core\Integration\IntegrationEvent`
+- `xdecaro\Core\Integration\EntityReference`
+- `xdecaro\Core\Integration\Capability`
+- `xdecaro\Core\Integration\IntegrationEvent`
 - shared Core UI assets when available
 
 Initial capabilities:

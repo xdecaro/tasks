@@ -8,7 +8,7 @@
   <authorUrl>https://github.com/xdecaro/tasks</authorUrl>
   <version>0.1.0</version>
   <description>COM_XDECAROTASKS_XML_DESCRIPTION</description>
-  <namespace path="src">Xdecaro\Component\Tasks</namespace>
+  <namespace path="src">xdecaro\Component\Tasks</namespace>
   <administration>
     <menu view="dashboard">COM_XDECAROTASKS</menu>
     <files folder="admin">
