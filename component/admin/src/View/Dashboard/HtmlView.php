@@ -1,5 +1,5 @@
 <?php
-namespace Xdecaro\Component\Decarotasks\Administrator\View\Dashboard;
+namespace Xdecaro\Component\Tasks\Administrator\View\Dashboard;
 
 defined('_JEXEC') or die;
 

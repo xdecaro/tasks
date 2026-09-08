@@ -1,5 +1,5 @@
 <?php
-namespace Xdecaro\Component\Decarotasks\Administrator\Service;
+namespace Xdecaro\Component\Tasks\Administrator\Service;
 
 defined('_JEXEC') or die;
 
@@ -21,10 +21,10 @@ final class CoreIntegrationService
         }
 
         return [
-            new Capability('com_decarotasks', 'tasks.create', '1'),
-            new Capability('com_decarotasks', 'tasks.assign', '1'),
-            new Capability('com_decarotasks', 'tasks.complete', '1'),
-            new Capability('com_decarotasks', 'tasks.query', '1'),
+            new Capability('com_xdecarotasks', 'tasks.create', '1'),
+            new Capability('com_xdecarotasks', 'tasks.assign', '1'),
+            new Capability('com_xdecarotasks', 'tasks.complete', '1'),
+            new Capability('com_xdecarotasks', 'tasks.query', '1'),
         ];
     }
 
@@ -32,7 +32,7 @@ final class CoreIntegrationService
     public function taskReference($id): ?EntityReference
     {
         return $this->isAvailable()
-            ? new EntityReference('com_decarotasks', 'task', $id)
+            ? new EntityReference('com_xdecarotasks', 'task', $id)
             : null;
     }
 }

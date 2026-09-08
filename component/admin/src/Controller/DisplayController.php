@@ -1,5 +1,5 @@
 <?php
-namespace Xdecaro\Component\Decarotasks\Administrator\Controller;
+namespace Xdecaro\Component\Tasks\Administrator\Controller;
 
 defined('_JEXEC') or die;
 
