@@ -1,0 +1,91 @@
+name: Tasks CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        php: ['7.4', '8.3']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: simplexml, mbstring
+          coverage: none
+      - name: Validate
+        run: bash build/build.sh
+      - name: Verify deterministic build
+        if: matrix.php == '8.3'
+        run: |
+          cp dist/SHA256SUMS.txt /tmp/tasks-first
+          bash build/build.sh >/tmp/tasks-second
+          diff -u /tmp/tasks-first dist/SHA256SUMS.txt
+
+  joomla-install:
+    name: Joomla ${{ matrix.joomla }} install
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - joomla: '4.4.14'
+            php: '8.2'
+            sha256: 'a1877816e070fa087529afcd73f214b7d5d76964d3ede0c3e6dfd354baad27b8'
+          - joomla: '5.4.8'
+            php: '8.3'
+            sha256: '8d3585939bca8e6b1d5f3e97dda2cc557c61e610daf488c871e1f62a97be9bd0'
+          - joomla: '6.1.3'
+            php: '8.3'
+            sha256: 'a49305652503f9344d046d55471f324a07882996132ed967c3b0fe34707ae4a1'
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: joomla
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli, zip, simplexml, mbstring
+          coverage: none
+      - name: Build Tasks package
+        run: bash build/build.sh
+      - name: Download and verify Joomla
+        run: |
+          JOOMLA="${{ matrix.joomla }}"; FILE="Joomla_${JOOMLA}-Stable-Full_Package.zip"
+          curl --fail --location --retry 3 "https://github.com/joomla/joomla-cms/releases/download/${JOOMLA}/${FILE}" -o /tmp/joomla.zip
+          echo "${{ matrix.sha256 }}  /tmp/joomla.zip" | sha256sum --check --strict
+          mkdir joomla; unzip -q /tmp/joomla.zip -d joomla
+      - name: Install Joomla
+        run: |
+          ADMIN_PASS="TasksCI-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}!"
+          cd joomla
+          php installation/joomla.php install --site-name="Tasks CI" --admin-user="Tasks CI Admin" --admin-username=admin --admin-password="$ADMIN_PASS" --admin-email=admin@example.invalid --db-type=mysqli --db-host=127.0.0.1 --db-user=root --db-pass='' --db-name=joomla --db-prefix=tsk_ --db-encryption=0 --no-interaction
+      - name: Install Tasks package
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"; cd joomla
+          php cli/joomla.php extension:install --path="$GITHUB_WORKSPACE/dist/pkg_xdecarotasks_${VERSION}.zip" -vvv
+      - name: Verify installed extensions and database
+        run: |
+          MYSQL=(mysql --protocol=TCP -h127.0.0.1 -uroot --batch --skip-column-names joomla)
+          test "$("${MYSQL[@]}" -e "SELECT COUNT(*) FROM tsk_extensions WHERE type='package' AND element='pkg_xdecarotasks';")" = "1"
+          test "$("${MYSQL[@]}" -e "SELECT COUNT(*) FROM tsk_extensions WHERE type='component' AND element='com_xdecarotasks';")" = "1"
+          test "$("${MYSQL[@]}" -e "SELECT COUNT(*) FROM tsk_extensions WHERE type='plugin' AND folder='task' AND element='xdecarotasks' AND enabled=1;")" = "1"
+          for table in items assignees checklist comments history; do test "$("${MYSQL[@]}" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='joomla' AND table_name='tsk_xdecarotasks_${table}';")" = "1"; done
