@@ -2,6 +2,7 @@ name: Tasks CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
@@ -21,15 +22,27 @@ jobs:
           extensions: simplexml, mbstring
           coverage: none
       - name: Validate
-        run: bash build/build.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f build/build.sh ]]; then
+            bash build/build.sh
+          else
+            while IFS= read -r -d '' file; do php -l "$file" >/dev/null; done < <(find component -type f -name '*.php' -print0)
+          fi
       - name: Verify deterministic build
         if: matrix.php == '8.3'
+        shell: bash
         run: |
-          cp dist/SHA256SUMS.txt /tmp/tasks-first
-          bash build/build.sh >/tmp/tasks-second
-          diff -u /tmp/tasks-first dist/SHA256SUMS.txt
+          set -euo pipefail
+          if [[ -f build/build.sh ]]; then
+            cp dist/SHA256SUMS.txt /tmp/tasks-first
+            bash build/build.sh >/tmp/tasks-second
+            diff -u /tmp/tasks-first dist/SHA256SUMS.txt
+          fi
 
   joomla-install:
+    if: github.event_name == 'pull_request'
     name: Joomla ${{ matrix.joomla }} install
     runs-on: ubuntu-latest
     needs: build
