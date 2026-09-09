@@ -34,6 +34,8 @@ final class TaskService
             if ($existing > 0) { return $existing; }
         }
         $now = $this->now();
+        $sourceEntity = trim((string) ($data['source_entity'] ?? ''));
+        $sourceId = trim((string) ($data['source_id'] ?? ''));
         $row = (object) [
             'title' => mb_substr($title, 0, 255),
             'description' => (string) ($data['description'] ?? ''),
@@ -42,8 +44,8 @@ final class TaskService
             'due_at' => $this->nullableDate($data['due_at'] ?? null),
             'completed_at' => null,
             'source_component' => $sourceComponent !== '' ? mb_substr($sourceComponent, 0, 64) : null,
-            'source_entity' => ($v = trim((string) ($data['source_entity'] ?? ''))) !== '' ? mb_substr($v, 0, 64) : null,
-            'source_id' => ($v = trim((string) ($data['source_id'] ?? ''))) !== '' ? mb_substr($v, 0, 128) : null,
+            'source_entity' => $sourceEntity !== '' ? mb_substr($sourceEntity, 0, 64) : null,
+            'source_id' => $sourceId !== '' ? mb_substr($sourceId, 0, 128) : null,
             'external_key' => $externalKey !== '' ? mb_substr($externalKey, 0, 191) : null,
             'created_by' => max(0, $actorUserId),
             'created_at' => $now,
@@ -102,17 +104,19 @@ final class TaskService
         $task = $this->getTask($taskId);
         if ($task === null) { throw new RuntimeException('Task not found.'); }
         if ($task['status'] === 'completed') { return; }
-        $row = (object) ['id' => $taskId, 'status' => 'completed', 'completed_at' => $this->now(), 'updated_by' => max(0, $actorUserId), 'updated_at' => $this->now()];
+        $now = $this->now();
+        $row = (object) ['id' => $taskId, 'status' => 'completed', 'completed_at' => $now, 'updated_by' => max(0, $actorUserId), 'updated_at' => $now];
         $this->db->updateObject('#__xdecarotasks_items', $row, 'id');
         $this->history($taskId, 'completed', $actorUserId, []);
     }
 
-    public function delete(int $taskId, int $actorUserId = 0): void
+    public function cancel(int $taskId, int $actorUserId = 0): void
     {
         $task = $this->getTask($taskId);
-        if ($task === null) { return; }
-        $query = $this->db->getQuery(true)->delete($this->db->quoteName('#__xdecarotasks_items'))->where($this->db->quoteName('id') . ' = :id')->bind(':id', $taskId, ParameterType::INTEGER);
-        $this->db->setQuery($query)->execute();
+        if ($task === null || $task['status'] === 'cancelled') { return; }
+        $row = (object) ['id' => $taskId, 'status' => 'cancelled', 'completed_at' => null, 'updated_by' => max(0, $actorUserId), 'updated_at' => $this->now()];
+        $this->db->updateObject('#__xdecarotasks_items', $row, 'id');
+        $this->history($taskId, 'cancelled', $actorUserId, []);
     }
 
     public function addChecklistItem(int $taskId, string $label, int $actorUserId = 0): int
@@ -193,7 +197,7 @@ final class TaskService
     {
         $id = $taskId;
         $query = $this->db->getQuery(true)->select('*')->from($this->db->quoteName($table))->where($this->db->quoteName('task_id') . ' = :task')->order($order)->bind(':task', $id, ParameterType::INTEGER);
-        return (array) $this->db->setQuery($query, 0, $limit > 0 ? $limit : null)->loadAssocList();
+        return (array) $this->db->setQuery($query, 0, $limit > 0 ? $limit : 0)->loadAssocList();
     }
 
     private function findByExternalKey(string $sourceComponent, string $externalKey): int
