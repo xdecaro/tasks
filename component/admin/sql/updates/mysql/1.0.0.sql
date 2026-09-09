@@ -1,0 +1,1 @@
+-- Tasks by xdecaro 1.0.0 schema baseline. Fresh installs use install.mysql.utf8mb4.sql.
