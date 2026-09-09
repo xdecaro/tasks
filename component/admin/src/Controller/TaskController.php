@@ -3,6 +3,7 @@ namespace xdecaro\Component\Tasks\Administrator\Controller;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -29,7 +30,10 @@ final class TaskController extends BaseController
             $component = $this->component(); $service = $component->getTaskService();
             if ($id > 0) { $service->update($id, $filtered, (int) $user->id); } else { $id = $service->create($filtered, (int) $user->id); }
             $recipientType = trim((string) ($filtered['recipient_type'] ?? '')); $recipientId = trim((string) ($filtered['recipient_id'] ?? ''));
-            if ($recipientId !== '' && $user->authorise('tasks.assign', 'com_xdecarotasks')) { $service->assign($id, $recipientType ?: 'user', $recipientId, (int) $user->id, true); }
+            if ($recipientId !== '' && $user->authorise('tasks.assign', 'com_xdecarotasks')) {
+                $notify = (bool) ComponentHelper::getParams('com_xdecarotasks')->get('notify_assignments', 1);
+                $service->assign($id, $recipientType ?: 'user', $recipientId, (int) $user->id, $notify);
+            }
             $app->enqueueMessage(Text::_('COM_XDECAROTASKS_TASK_SAVED'), 'success');
         } catch (Throwable $exception) { $app->enqueueMessage($exception->getMessage(), 'error'); }
         $this->setRedirect(Route::_('index.php?option=com_xdecarotasks&view=task&id=' . $id, false));

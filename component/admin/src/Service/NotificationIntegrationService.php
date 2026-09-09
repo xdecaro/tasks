@@ -21,33 +21,38 @@ final class NotificationIntegrationService
 
     public function notifyAssignment(array $task, string $recipientType, string $recipientId): bool
     {
+        $this->loadLanguage();
         return $this->publish($task, $recipientType, $recipientId, 'assignment', Text::sprintf('COM_XDECAROTASKS_NOTIFICATION_ASSIGNED', (string) $task['title']));
     }
 
     public function notifyDue(array $task, string $recipientType, string $recipientId, bool $overdue): bool
     {
+        $this->loadLanguage();
         $phase = $overdue ? 'overdue' : 'due';
-        $body = $overdue
+        $message = $overdue
             ? Text::sprintf('COM_XDECAROTASKS_NOTIFICATION_OVERDUE', (string) $task['title'])
             : Text::sprintf('COM_XDECAROTASKS_NOTIFICATION_DUE', (string) $task['title']);
-        return $this->publish($task, $recipientType, $recipientId, $phase, $body);
+        return $this->publish($task, $recipientType, $recipientId, $phase, $message);
     }
 
-    private function publish(array $task, string $recipientType, string $recipientId, string $phase, string $body): bool
+    private function publish(array $task, string $recipientType, string $recipientId, string $phase, string $message): bool
     {
         try {
             $component = Factory::getApplication()->bootComponent('com_xdecaronotifications');
             if (!is_object($component) || !method_exists($component, 'getNotificationService')) { return false; }
             $service = $component->getNotificationService();
             if (!is_object($service) || !method_exists($service, 'create')) { return false; }
+            $priority = (string) ($task['priority'] ?? 'normal');
+            if ($priority === 'urgent') { $priority = 'critical'; }
+            if (!in_array($priority, ['low','normal','high','critical'], true)) { $priority = 'normal'; }
             $dueKey = isset($task['due_at']) ? (string) $task['due_at'] : '';
             $service->create([
                 'recipient_type' => $recipientType,
                 'recipient_id' => $recipientId,
                 'category' => 'tasks',
-                'priority' => ($task['priority'] ?? 'normal') === 'urgent' ? 'urgent' : (($task['priority'] ?? 'normal') === 'high' ? 'high' : 'normal'),
+                'priority' => $priority,
                 'title' => Text::_('COM_XDECAROTASKS_NOTIFICATION_TITLE'),
-                'body' => $body,
+                'message' => $message,
                 'source_component' => 'com_xdecarotasks',
                 'source_entity' => 'task',
                 'source_id' => (string) $task['id'],
@@ -58,5 +63,10 @@ final class NotificationIntegrationService
         } catch (Throwable $exception) {
             return false;
         }
+    }
+
+    private function loadLanguage(): void
+    {
+        try { Factory::getApplication()->getLanguage()->load('com_xdecarotasks', JPATH_ADMINISTRATOR . '/components/com_xdecarotasks', null, true); } catch (Throwable $exception) { }
     }
 }
