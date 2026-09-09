@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="details">
+    <field name="id" type="hidden" />
+    <field name="title" type="text" required="true" maxlength="255" label="COM_XDECAROTASKS_FIELD_TITLE" />
+    <field name="description" type="textarea" rows="8" filter="safehtml" label="COM_XDECAROTASKS_FIELD_DESCRIPTION" />
+    <field name="status" type="list" default="open" label="COM_XDECAROTASKS_FIELD_STATUS"><option value="open">COM_XDECAROTASKS_STATUS_OPEN</option><option value="in_progress">COM_XDECAROTASKS_STATUS_IN_PROGRESS</option><option value="blocked">COM_XDECAROTASKS_STATUS_BLOCKED</option><option value="completed">COM_XDECAROTASKS_STATUS_COMPLETED</option><option value="cancelled">COM_XDECAROTASKS_STATUS_CANCELLED</option></field>
+    <field name="priority" type="list" default="normal" label="COM_XDECAROTASKS_FIELD_PRIORITY"><option value="low">COM_XDECAROTASKS_PRIORITY_LOW</option><option value="normal">COM_XDECAROTASKS_PRIORITY_NORMAL</option><option value="high">COM_XDECAROTASKS_PRIORITY_HIGH</option><option value="urgent">COM_XDECAROTASKS_PRIORITY_URGENT</option></field>
+    <field name="due_at" type="calendar" showtime="true" filter="user_utc" label="COM_XDECAROTASKS_FIELD_DUE_AT" />
+    <field name="recipient_type" type="list" default="user" label="COM_XDECAROTASKS_FIELD_ASSIGNEE_TYPE"><option value="user">Joomla User</option><option value="person">Person</option><option value="organization">Organization</option><option value="role">Role</option></field>
+    <field name="recipient_id" type="text" maxlength="128" label="COM_XDECAROTASKS_FIELD_ASSIGNEE_ID" />
+  </fieldset>
+</form>

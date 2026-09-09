@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-  <fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL">
-    <field name="rules" type="rules" label="JCONFIG_PERMISSIONS_LABEL" filter="rules" validate="rules" component="com_xdecarotasks" section="component" />
+  <fieldset name="general" label="COM_XDECAROTASKS_CONFIG_GENERAL">
+    <field name="due_reminder_minutes" type="number" default="1440" min="15" max="10080" label="COM_XDECAROTASKS_CONFIG_DUE_REMINDER" />
+    <field name="notify_assignments" type="radio" default="1" label="COM_XDECAROTASKS_CONFIG_NOTIFY_ASSIGNMENTS" class="btn-group btn-group-yesno"><option value="1">JYES</option><option value="0">JNO</option></field>
   </fieldset>
 </config>

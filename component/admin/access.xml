@@ -6,5 +6,8 @@
     <action name="core.create" title="JACTION_CREATE" />
     <action name="core.edit" title="JACTION_EDIT" />
     <action name="core.delete" title="JACTION_DELETE" />
+    <action name="tasks.assign" title="COM_XDECAROTASKS_ACTION_ASSIGN" />
+    <action name="tasks.complete" title="COM_XDECAROTASKS_ACTION_COMPLETE" />
+    <action name="tasks.comment" title="COM_XDECAROTASKS_ACTION_COMMENT" />
   </section>
 </access>

@@ -1,30 +1,19 @@
 # Tasks by xdecaro
 
-Tasks manages actionable work across the xdecaro Joomla ecosystem.
+Tasks is the actionable-work component for the xdecaro Joomla ecosystem.
 
-## Technical identity
+## 1.0 scope
 
-- Component: `com_xdecarotasks`
-- PHP namespace: `xdecaro\Component\Tasks`
-- Reserved package identity: `pkg_xdecarotasks`
-- Reserved database namespace: `#__xdecarotasks_*`
+- tasks with status, priority and due date;
+- typed assignees (`user`, `person`, `organization`, `role`);
+- checklist, comments and task history;
+- stable source references without cross-component foreign keys;
+- idempotent creation through `source_component` + `external_key`;
+- public services for `tasks.create`, `tasks.assign`, `tasks.complete`, `tasks.query`;
+- optional Core 1.4 `CapabilityRegistry` and `EntityReference` integration;
+- optional Notifications alerts for assignment and due dates;
+- Joomla Scheduled Tasks routine for due/overdue reminders.
 
-The package and database identifiers are reserved for future implementation; they must not be treated as shipped until their manifests/schema actually exist.
+Tasks means **what must be done**. Notifications means **what a user must know**. Tasks does not implement official communications, project management, accounting, document storage or product-specific workflows.
 
-Tasks owns tasks, assignees, status, priority, due dates, checklists, comments and completion history. Source records remain owned by their original components and are referenced through stable Core integration references rather than cross-component database foreign keys.
-
-Initial Core integration targets:
-
-- `xdecaro\Core\Integration\EntityReference`
-- `xdecaro\Core\Integration\Capability`
-- `xdecaro\Core\Integration\IntegrationEvent`
-- shared Core UI assets when available
-
-Initial capabilities:
-
-- `tasks.create`
-- `tasks.assign`
-- `tasks.complete`
-- `tasks.query`
-
-Target Joomla 4, 5 and 6 only where runtime compatibility is actually verified.
+Target: Joomla 4, 5 and 6 where tested; PHP 7.4+.

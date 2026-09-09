@@ -6,18 +6,27 @@
   <copyright>Copyright (C) 2026 Luca De Caro. All rights reserved.</copyright>
   <license>GNU General Public License version 2 or later</license>
   <authorUrl>https://github.com/xdecaro/tasks</authorUrl>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <description>COM_XDECAROTASKS_XML_DESCRIPTION</description>
   <namespace path="src">xdecaro\Component\Tasks</namespace>
   <administration>
     <menu view="dashboard">COM_XDECAROTASKS</menu>
+    <submenu>
+      <menu view="dashboard">COM_XDECAROTASKS_DASHBOARD</menu>
+      <menu view="tasks">COM_XDECAROTASKS_TASKS</menu>
+      <menu view="information">COM_XDECAROTASKS_INFORMATION</menu>
+    </submenu>
     <files folder="admin">
       <filename>access.xml</filename>
       <filename>config.xml</filename>
+      <folder>forms</folder>
       <folder>language</folder>
       <folder>services</folder>
+      <folder>sql</folder>
       <folder>src</folder>
       <folder>tmpl</folder>
     </files>
   </administration>
+  <install><sql><file driver="mysql" charset="utf8">sql/install.mysql.utf8mb4.sql</file></sql></install>
+  <update><schemas><schemapath type="mysql">sql/updates/mysql</schemapath></schemas></update>
 </extension>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelogs>
+  <changelog>
+    <element>pkg_xdecarotasks</element><type>package</type><version>1.0.0</version>
+    <addition>
+      <item>Task lifecycle, priorities and due dates.</item>
+      <item>Typed assignees, checklist, comments and immutable history.</item>
+      <item>Public create, assign, complete and query services.</item>
+      <item>Optional Core 1.4 capability/entity-reference integration.</item>
+      <item>Optional Notifications integration and Joomla Scheduled Tasks due reminders.</item>
+      <item>Administrator dashboard, task list/editor and diagnostics.</item>
+      <item>Deterministic package builds, update feed and Joomla 4/5/6 clean-install CI.</item>
+    </addition>
+  </changelog>
+</changelogs>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fields name="params">
+    <fieldset name="basic">
+      <field name="reminder_minutes" type="number" default="1440" min="15" max="10080" label="PLG_TASK_XDECAROTASKS_DUE_MINUTES" />
+      <field name="limit" type="number" default="200" min="1" max="1000" label="PLG_TASK_XDECAROTASKS_DUE_LIMIT" />
+    </fieldset>
+  </fields>
+</form>
