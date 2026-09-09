@@ -9,7 +9,7 @@
     <version>1.0.0</version>
     <downloads><downloadurl type="full" format="zip">https://github.com/xdecaro/tasks/releases/download/v1.0.0/pkg_xdecarotasks_1.0.0.zip</downloadurl></downloads>
     <tags><tag>stable</tag></tags>
-    <sha256>0000000000000000000000000000000000000000000000000000000000000000</sha256>
+    <sha256>95b7631394824d513e0305c71d53bfdeb1e8064a7cb24dcca6db6356092d09b5</sha256>
     <maintainer>Luca De Caro</maintainer>
     <maintainerurl>https://github.com/xdecaro/tasks</maintainerurl>
     <changelogurl>https://raw.githubusercontent.com/xdecaro/tasks/main/updates/changelog.xml</changelogurl>
